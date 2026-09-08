@@ -1,0 +1,51 @@
+Start -> Program
+Program -> Block
+Block -> ConstDecl VarDecl ProcDeclList Stmt
+
+M -> eps
+N -> eps
+P -> eps
+
+ConstDecl -> const ConstDefList ;
+ConstDecl -> eps
+ConstDefList -> ConstDef
+ConstDefList -> ConstDefList , ConstDef
+ConstDef -> ident = number
+
+VarDecl -> var IdentList ;
+VarDecl -> eps
+IdentList -> ident
+IdentList -> IdentList , ident
+
+ProcDeclList -> ProcDecl ; ProcDeclList
+ProcDeclList -> eps
+
+ProcDecl -> procedure ident ; N P Block
+
+StmtList -> Stmt
+StmtList -> StmtList ; M Stmt
+
+Stmt -> ident := Exp
+Stmt -> call ident
+Stmt -> begin StmtList end
+Stmt -> if Cond then M Stmt
+Stmt -> while M Cond do M Stmt
+Stmt -> eps
+
+Cond -> Exp = Exp
+Cond -> Exp <> Exp
+Cond -> Exp < Exp
+Cond -> Exp > Exp
+Cond -> Exp <= Exp
+Cond -> Exp >= Exp
+Cond -> odd ident
+
+Exp -> Exp + Term
+Exp -> Exp - Term
+Exp -> Term
+Term -> Term * Factor
+Term -> Term / Factor
+Term -> Factor
+Factor -> ident
+Factor -> number
+Factor -> ( Exp )

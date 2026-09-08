@@ -1,0 +1,17 @@
+const a = 10 , b = 3 ;
+var x , y , z ;
+procedure p ;
+begin
+    x := a + b ;
+    if x > 10 then
+        y := x * 2
+end ;
+begin
+    call p ;
+    z := y - b ;
+    while z > 0 do
+    begin
+        z := z - 1 ;
+        x := x + 1
+    end
+end

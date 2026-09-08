@@ -1,0 +1,16 @@
+# Visual Studio cache
+.vs/
+
+# User-specific files
+*.vcxproj.user
+
+# Build outputs
+x64/
+Debug/
+Release/
+*.exe
+*.pdb
+*.obj
+*.ilk
+*.idb
+*.tlog/

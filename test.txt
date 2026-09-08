@@ -1,0 +1,19 @@
+const m = 15 , n = 35 , k = 8 ;
+var u , v , w , t ;
+procedure s ;
+begin
+u := m - n / k ;
+if u <> v then
+v := ( u + t ) * n
+end ;
+procedure r ;
+begin
+while w <= m do
+begin
+w := w * 2 ;
+t := t - w + m
+end ;
+call s ; 
+if odd t then
+w := t / ( n - k )
+end ;

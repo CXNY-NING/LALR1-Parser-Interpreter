@@ -1,0 +1,1072 @@
+文法:
+Start -> Start
+Start -> Program
+Program -> Block
+Block -> ConstDecl VarDecl ProcDeclList Stmt
+M -> eps
+N -> eps
+P -> eps
+ConstDecl -> const ConstDefList ;
+ConstDecl -> eps
+ConstDefList -> ConstDef
+ConstDefList -> ConstDefList , ConstDef
+ConstDef -> ident = number
+VarDecl -> var IdentList ;
+VarDecl -> eps
+IdentList -> ident
+IdentList -> IdentList , ident
+ProcDeclList -> ProcDecl ; ProcDeclList
+ProcDeclList -> eps
+ProcDecl -> procedure ident ; N P Block
+StmtList -> Stmt
+StmtList -> StmtList ; M Stmt
+Stmt -> ident := Exp
+Stmt -> call ident
+Stmt -> begin StmtList end
+Stmt -> if Cond then M Stmt
+Stmt -> while M Cond do M Stmt
+Stmt -> eps
+Cond -> Exp = Exp
+Cond -> Exp <> Exp
+Cond -> Exp < Exp
+Cond -> Exp > Exp
+Cond -> Exp <= Exp
+Cond -> Exp >= Exp
+Cond -> odd ident
+Exp -> Exp + Term
+Exp -> Exp - Term
+Exp -> Term
+Term -> Term * Factor
+Term -> Term / Factor
+Term -> Factor
+Factor -> ident
+Factor -> number
+Factor -> ( Exp )
+First集合:
+Start = {eps,const,ident,var,procedure,call,begin,if,while}
+Program = {eps,const,ident,var,procedure,call,begin,if,while}
+Block = {eps,const,ident,var,procedure,call,begin,if,while}
+ConstDecl = {eps,const}
+VarDecl = {eps,var}
+ProcDeclList = {eps,procedure}
+Stmt = {eps,ident,call,begin,if,while}
+M = {eps}
+N = {eps}
+P = {eps}
+ConstDefList = {ident}
+ConstDef = {ident}
+IdentList = {ident}
+ProcDecl = {procedure}
+StmtList = {eps,;,ident,call,begin,if,while}
+Exp = {ident,number,(}
+Cond = {ident,number,odd,(}
+Term = {ident,number,(}
+Factor = {ident,number,(}
+Follow集合:
+Start = {$}
+Program = {$}
+Block = {$,;}
+ConstDecl = {$,;,ident,var,procedure,call,begin,if,while}
+VarDecl = {$,;,ident,procedure,call,begin,if,while}
+ProcDeclList = {$,;,ident,call,begin,if,while}
+Stmt = {$,;,end}
+M = {$,;,ident,number,call,begin,end,if,while,odd,(}
+N = {const,;,ident,var,procedure,call,begin,if,while}
+P = {const,;,ident,var,procedure,call,begin,if,while}
+ConstDefList = {;,,}
+ConstDef = {;,,}
+IdentList = {;,,}
+ProcDecl = {;}
+StmtList = {;,end}
+Exp = {$,;,=,end,then,do,<>,<,>,<=,>=,+,-,)}
+Cond = {then,do}
+Term = {$,;,=,end,then,do,<>,<,>,<=,>=,+,-,*,/,)}
+Factor = {$,;,=,end,then,do,<>,<,>,<=,>=,+,-,*,/,)}
+文法:
+.0:
+Start -> . Start  | $
+Start -> . Program  | $
+Program -> . Block  | $
+Block -> . ConstDecl VarDecl ProcDeclList Stmt  | $
+ConstDecl -> . const ConstDefList ;  | $ ident var procedure call begin if while
+ConstDecl -> eps . | $ ident var procedure call begin if while
+  $ -> REDUCE(8)
+  const -> SHIFT(5)
+  ident -> REDUCE(8)
+  var -> REDUCE(8)
+  procedure -> REDUCE(8)
+  call -> REDUCE(8)
+  begin -> REDUCE(8)
+  if -> REDUCE(8)
+  while -> REDUCE(8)
+
+.1:
+Start -> Start . | $
+  $ -> ACC
+
+.2:
+Start -> Program . | $
+  $ -> REDUCE(1)
+
+.3:
+Program -> Block . | $
+  $ -> REDUCE(2)
+
+.4:
+Block -> ConstDecl . VarDecl ProcDeclList Stmt  | $ ;
+VarDecl -> . var IdentList ;  | $ ; ident procedure call begin if while
+VarDecl -> eps . | $ ; ident procedure call begin if while
+  $ -> REDUCE(13)
+  ; -> REDUCE(13)
+  ident -> REDUCE(13)
+  var -> SHIFT(7)
+  procedure -> REDUCE(13)
+  call -> REDUCE(13)
+  begin -> REDUCE(13)
+  if -> REDUCE(13)
+  while -> REDUCE(13)
+
+.5:
+ConstDecl -> const . ConstDefList ;  | $ ; ident var procedure call begin if while
+ConstDefList -> . ConstDef  | ; ,
+ConstDefList -> . ConstDefList , ConstDef  | ; ,
+ConstDef -> . ident = number  | ;
+  ident -> SHIFT(10)
+
+.6:
+Block -> ConstDecl VarDecl . ProcDeclList Stmt  | $ ;
+ProcDeclList -> . ProcDecl ; ProcDeclList  | $ ; ident call begin if while
+ProcDeclList -> eps . | $ ; ident call begin if while
+ProcDecl -> . procedure ident ; N P Block  | ;
+  $ -> REDUCE(17)
+  ; -> REDUCE(17)
+  ident -> REDUCE(17)
+  procedure -> SHIFT(13)
+  call -> REDUCE(17)
+  begin -> REDUCE(17)
+  if -> REDUCE(17)
+  while -> REDUCE(17)
+
+.7:
+VarDecl -> var . IdentList ;  | $ ; ident procedure call begin if while
+IdentList -> . ident  | ; ,
+IdentList -> . IdentList , ident  | ; ,
+  ident -> SHIFT(14)
+
+.8:
+ConstDecl -> const ConstDefList . ;  | $ ; ident var procedure call begin if while
+ConstDefList -> ConstDefList . , ConstDef  | ; ,
+  ; -> SHIFT(16)
+  , -> SHIFT(17)
+
+.9:
+ConstDefList -> ConstDef . | ; ,
+  ; -> REDUCE(9)
+  , -> REDUCE(9)
+
+.10:
+ConstDef -> ident . = number  | ; ,
+  = -> SHIFT(18)
+
+.11:
+Block -> ConstDecl VarDecl ProcDeclList . Stmt  | $ ;
+Stmt -> . ident := Exp  | $ ;
+Stmt -> . call ident  | $ ;
+Stmt -> . begin StmtList end  | $ ;
+Stmt -> . if Cond then M Stmt  | $ ;
+Stmt -> . while M Cond do M Stmt  | $ ;
+Stmt -> eps . | $ ;
+  $ -> REDUCE(26)
+  ; -> REDUCE(26)
+  ident -> SHIFT(20)
+  call -> SHIFT(21)
+  begin -> SHIFT(22)
+  if -> SHIFT(23)
+  while -> SHIFT(24)
+
+.12:
+ProcDeclList -> ProcDecl . ; ProcDeclList  | $ ; ident call begin if while
+  ; -> SHIFT(25)
+
+.13:
+ProcDecl -> procedure . ident ; N P Block  | ;
+  ident -> SHIFT(26)
+
+.14:
+IdentList -> ident . | ; ,
+  ; -> REDUCE(14)
+  , -> REDUCE(14)
+
+.15:
+VarDecl -> var IdentList . ;  | $ ; ident procedure call begin if while
+IdentList -> IdentList . , ident  | ; ,
+  ; -> SHIFT(27)
+  , -> SHIFT(28)
+
+.16:
+ConstDecl -> const ConstDefList ; . | $ ; ident var procedure call begin if while
+  $ -> REDUCE(7)
+  ; -> REDUCE(7)
+  ident -> REDUCE(7)
+  var -> REDUCE(7)
+  procedure -> REDUCE(7)
+  call -> REDUCE(7)
+  begin -> REDUCE(7)
+  if -> REDUCE(7)
+  while -> REDUCE(7)
+
+.17:
+ConstDefList -> ConstDefList , . ConstDef  | ; ,
+ConstDef -> . ident = number  | ; ,
+  ident -> SHIFT(10)
+
+.18:
+ConstDef -> ident = . number  | ; ,
+  number -> SHIFT(30)
+
+.19:
+Block -> ConstDecl VarDecl ProcDeclList Stmt . | $ ;
+  $ -> REDUCE(3)
+  ; -> REDUCE(3)
+
+.20:
+Stmt -> ident . := Exp  | $ ; end
+  := -> SHIFT(31)
+
+.21:
+Stmt -> call . ident  | $ ; end
+  ident -> SHIFT(32)
+
+.22:
+Stmt -> begin . StmtList end  | $ ; end
+StmtList -> . Stmt  | ; end
+StmtList -> . StmtList ; M Stmt  | ; end
+Stmt -> . ident := Exp  | end
+Stmt -> . call ident  | end
+Stmt -> . begin StmtList end  | end
+Stmt -> . if Cond then M Stmt  | end
+Stmt -> . while M Cond do M Stmt  | end
+Stmt -> eps . | end
+  ident -> SHIFT(20)
+  call -> SHIFT(21)
+  begin -> SHIFT(22)
+  end -> REDUCE(26)
+  if -> SHIFT(23)
+  while -> SHIFT(24)
+
+.23:
+Stmt -> if . Cond then M Stmt  | $ ; end
+Cond -> . Exp = Exp  | then
+Cond -> . Exp <> Exp  | then
+Cond -> . Exp < Exp  | then
+Cond -> . Exp > Exp  | then
+Cond -> . Exp <= Exp  | then
+Cond -> . Exp >= Exp  | then
+Cond -> . odd ident  | then
+Exp -> . Exp + Term  | = <> < > <= >= + -
+Exp -> . Exp - Term  | = <> < > <= >= + -
+Exp -> . Term  | = <> < > <= >= + -
+Term -> . Term * Factor  | = <> < > <= >= + - * /
+Term -> . Term / Factor  | = <> < > <= >= + - * /
+Term -> . Factor  | = <> < > <= >= + - * /
+Factor -> . ident  | = <> < > <= >= + - * /
+Factor -> . number  | = <> < > <= >= + - * /
+Factor -> . ( Exp )  | = <> < > <= >= + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  odd -> SHIFT(39)
+  ( -> SHIFT(42)
+
+.24:
+Stmt -> while . M Cond do M Stmt  | $ ; end
+M -> eps . | ident number odd (
+  ident -> REDUCE(4)
+  number -> REDUCE(4)
+  odd -> REDUCE(4)
+  ( -> REDUCE(4)
+
+.25:
+ProcDeclList -> ProcDecl ; . ProcDeclList  | $ ; ident call begin if while
+ProcDeclList -> . ProcDecl ; ProcDeclList  | $ ; ident call begin if while
+ProcDeclList -> eps . | $ ; ident call begin if while
+ProcDecl -> . procedure ident ; N P Block  | ;
+  $ -> REDUCE(17)
+  ; -> REDUCE(17)
+  ident -> REDUCE(17)
+  procedure -> SHIFT(13)
+  call -> REDUCE(17)
+  begin -> REDUCE(17)
+  if -> REDUCE(17)
+  while -> REDUCE(17)
+
+.26:
+ProcDecl -> procedure ident . ; N P Block  | ;
+  ; -> SHIFT(45)
+
+.27:
+VarDecl -> var IdentList ; . | $ ; ident procedure call begin if while
+  $ -> REDUCE(12)
+  ; -> REDUCE(12)
+  ident -> REDUCE(12)
+  procedure -> REDUCE(12)
+  call -> REDUCE(12)
+  begin -> REDUCE(12)
+  if -> REDUCE(12)
+  while -> REDUCE(12)
+
+.28:
+IdentList -> IdentList , . ident  | ; ,
+  ident -> SHIFT(46)
+
+.29:
+ConstDefList -> ConstDefList , ConstDef . | ; ,
+  ; -> REDUCE(10)
+  , -> REDUCE(10)
+
+.30:
+ConstDef -> ident = number . | ; ,
+  ; -> REDUCE(11)
+  , -> REDUCE(11)
+
+.31:
+Stmt -> ident := . Exp  | $ ; end
+Exp -> . Exp + Term  | $ ; end + -
+Exp -> . Exp - Term  | $ ; end + -
+Exp -> . Term  | $ ; end + -
+Term -> . Term * Factor  | $ ; end + - * /
+Term -> . Term / Factor  | $ ; end + - * /
+Term -> . Factor  | $ ; end + - * /
+Factor -> . ident  | $ ; end + - * /
+Factor -> . number  | $ ; end + - * /
+Factor -> . ( Exp )  | $ ; end + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.32:
+Stmt -> call ident . | $ ; end
+  $ -> REDUCE(22)
+  ; -> REDUCE(22)
+  end -> REDUCE(22)
+
+.33:
+StmtList -> Stmt . | ; end
+  ; -> REDUCE(19)
+  end -> REDUCE(19)
+
+.34:
+Stmt -> begin StmtList . end  | $ ; end
+StmtList -> StmtList . ; M Stmt  | ; end
+  ; -> SHIFT(48)
+  end -> SHIFT(49)
+
+.35:
+Factor -> ident . | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(40)
+  ; -> REDUCE(40)
+  = -> REDUCE(40)
+  end -> REDUCE(40)
+  then -> REDUCE(40)
+  do -> REDUCE(40)
+  <> -> REDUCE(40)
+  < -> REDUCE(40)
+  > -> REDUCE(40)
+  <= -> REDUCE(40)
+  >= -> REDUCE(40)
+  + -> REDUCE(40)
+  - -> REDUCE(40)
+  * -> REDUCE(40)
+  / -> REDUCE(40)
+  ) -> REDUCE(40)
+
+.36:
+Factor -> number . | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(41)
+  ; -> REDUCE(41)
+  = -> REDUCE(41)
+  end -> REDUCE(41)
+  then -> REDUCE(41)
+  do -> REDUCE(41)
+  <> -> REDUCE(41)
+  < -> REDUCE(41)
+  > -> REDUCE(41)
+  <= -> REDUCE(41)
+  >= -> REDUCE(41)
+  + -> REDUCE(41)
+  - -> REDUCE(41)
+  * -> REDUCE(41)
+  / -> REDUCE(41)
+  ) -> REDUCE(41)
+
+.37:
+Cond -> Exp . = Exp  | then do
+Cond -> Exp . <> Exp  | then do
+Cond -> Exp . < Exp  | then do
+Cond -> Exp . > Exp  | then do
+Cond -> Exp . <= Exp  | then do
+Cond -> Exp . >= Exp  | then do
+Exp -> Exp . + Term  | = <> < > <= >= + -
+Exp -> Exp . - Term  | = <> < > <= >= + -
+  = -> SHIFT(50)
+  <> -> SHIFT(51)
+  < -> SHIFT(52)
+  > -> SHIFT(53)
+  <= -> SHIFT(54)
+  >= -> SHIFT(55)
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+
+.38:
+Stmt -> if Cond . then M Stmt  | $ ; end
+  then -> SHIFT(58)
+
+.39:
+Cond -> odd . ident  | then do
+  ident -> SHIFT(59)
+
+.40:
+Exp -> Term . | $ ; = end then do <> < > <= >= + - )
+Term -> Term . * Factor  | $ ; = end then do <> < > <= >= + - * / )
+Term -> Term . / Factor  | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(36)
+  ; -> REDUCE(36)
+  = -> REDUCE(36)
+  end -> REDUCE(36)
+  then -> REDUCE(36)
+  do -> REDUCE(36)
+  <> -> REDUCE(36)
+  < -> REDUCE(36)
+  > -> REDUCE(36)
+  <= -> REDUCE(36)
+  >= -> REDUCE(36)
+  + -> REDUCE(36)
+  - -> REDUCE(36)
+  * -> SHIFT(60)
+  / -> SHIFT(61)
+  ) -> REDUCE(36)
+
+.41:
+Term -> Factor . | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(39)
+  ; -> REDUCE(39)
+  = -> REDUCE(39)
+  end -> REDUCE(39)
+  then -> REDUCE(39)
+  do -> REDUCE(39)
+  <> -> REDUCE(39)
+  < -> REDUCE(39)
+  > -> REDUCE(39)
+  <= -> REDUCE(39)
+  >= -> REDUCE(39)
+  + -> REDUCE(39)
+  - -> REDUCE(39)
+  * -> REDUCE(39)
+  / -> REDUCE(39)
+  ) -> REDUCE(39)
+
+.42:
+Factor -> ( . Exp )  | $ ; = end then do <> < > <= >= + - * / )
+Exp -> . Exp + Term  | + - )
+Exp -> . Exp - Term  | + - )
+Exp -> . Term  | + - )
+Term -> . Term * Factor  | + - * / )
+Term -> . Term / Factor  | + - * / )
+Term -> . Factor  | + - * / )
+Factor -> . ident  | + - * / )
+Factor -> . number  | + - * / )
+Factor -> . ( Exp )  | + - * / )
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.43:
+Stmt -> while M . Cond do M Stmt  | $ ; end
+Cond -> . Exp = Exp  | do
+Cond -> . Exp <> Exp  | do
+Cond -> . Exp < Exp  | do
+Cond -> . Exp > Exp  | do
+Cond -> . Exp <= Exp  | do
+Cond -> . Exp >= Exp  | do
+Cond -> . odd ident  | do
+Exp -> . Exp + Term  | = <> < > <= >= + -
+Exp -> . Exp - Term  | = <> < > <= >= + -
+Exp -> . Term  | = <> < > <= >= + -
+Term -> . Term * Factor  | = <> < > <= >= + - * /
+Term -> . Term / Factor  | = <> < > <= >= + - * /
+Term -> . Factor  | = <> < > <= >= + - * /
+Factor -> . ident  | = <> < > <= >= + - * /
+Factor -> . number  | = <> < > <= >= + - * /
+Factor -> . ( Exp )  | = <> < > <= >= + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  odd -> SHIFT(39)
+  ( -> SHIFT(42)
+
+.44:
+ProcDeclList -> ProcDecl ; ProcDeclList . | $ ; ident call begin if while
+  $ -> REDUCE(16)
+  ; -> REDUCE(16)
+  ident -> REDUCE(16)
+  call -> REDUCE(16)
+  begin -> REDUCE(16)
+  if -> REDUCE(16)
+  while -> REDUCE(16)
+
+.45:
+ProcDecl -> procedure ident ; . N P Block  | ;
+N -> eps . | const ; ident var procedure call begin if while
+  const -> REDUCE(5)
+  ; -> REDUCE(5)
+  ident -> REDUCE(5)
+  var -> REDUCE(5)
+  procedure -> REDUCE(5)
+  call -> REDUCE(5)
+  begin -> REDUCE(5)
+  if -> REDUCE(5)
+  while -> REDUCE(5)
+
+.46:
+IdentList -> IdentList , ident . | ; ,
+  ; -> REDUCE(15)
+  , -> REDUCE(15)
+
+.47:
+Stmt -> ident := Exp . | $ ; end
+Exp -> Exp . + Term  | $ ; end + -
+Exp -> Exp . - Term  | $ ; end + -
+  $ -> REDUCE(21)
+  ; -> REDUCE(21)
+  end -> REDUCE(21)
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+
+.48:
+StmtList -> StmtList ; . M Stmt  | ; end
+M -> eps . | ; ident call begin end if while
+  ; -> REDUCE(4)
+  ident -> REDUCE(4)
+  call -> REDUCE(4)
+  begin -> REDUCE(4)
+  end -> REDUCE(4)
+  if -> REDUCE(4)
+  while -> REDUCE(4)
+
+.49:
+Stmt -> begin StmtList end . | $ ; end
+  $ -> REDUCE(23)
+  ; -> REDUCE(23)
+  end -> REDUCE(23)
+
+.50:
+Cond -> Exp = . Exp  | then do
+Exp -> . Exp + Term  | then do + -
+Exp -> . Exp - Term  | then do + -
+Exp -> . Term  | then do + -
+Term -> . Term * Factor  | then do + - * /
+Term -> . Term / Factor  | then do + - * /
+Term -> . Factor  | then do + - * /
+Factor -> . ident  | then do + - * /
+Factor -> . number  | then do + - * /
+Factor -> . ( Exp )  | then do + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.51:
+Cond -> Exp <> . Exp  | then do
+Exp -> . Exp + Term  | then do + -
+Exp -> . Exp - Term  | then do + -
+Exp -> . Term  | then do + -
+Term -> . Term * Factor  | then do + - * /
+Term -> . Term / Factor  | then do + - * /
+Term -> . Factor  | then do + - * /
+Factor -> . ident  | then do + - * /
+Factor -> . number  | then do + - * /
+Factor -> . ( Exp )  | then do + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.52:
+Cond -> Exp < . Exp  | then do
+Exp -> . Exp + Term  | then do + -
+Exp -> . Exp - Term  | then do + -
+Exp -> . Term  | then do + -
+Term -> . Term * Factor  | then do + - * /
+Term -> . Term / Factor  | then do + - * /
+Term -> . Factor  | then do + - * /
+Factor -> . ident  | then do + - * /
+Factor -> . number  | then do + - * /
+Factor -> . ( Exp )  | then do + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.53:
+Cond -> Exp > . Exp  | then do
+Exp -> . Exp + Term  | then do + -
+Exp -> . Exp - Term  | then do + -
+Exp -> . Term  | then do + -
+Term -> . Term * Factor  | then do + - * /
+Term -> . Term / Factor  | then do + - * /
+Term -> . Factor  | then do + - * /
+Factor -> . ident  | then do + - * /
+Factor -> . number  | then do + - * /
+Factor -> . ( Exp )  | then do + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.54:
+Cond -> Exp <= . Exp  | then do
+Exp -> . Exp + Term  | then do + -
+Exp -> . Exp - Term  | then do + -
+Exp -> . Term  | then do + -
+Term -> . Term * Factor  | then do + - * /
+Term -> . Term / Factor  | then do + - * /
+Term -> . Factor  | then do + - * /
+Factor -> . ident  | then do + - * /
+Factor -> . number  | then do + - * /
+Factor -> . ( Exp )  | then do + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.55:
+Cond -> Exp >= . Exp  | then do
+Exp -> . Exp + Term  | then do + -
+Exp -> . Exp - Term  | then do + -
+Exp -> . Term  | then do + -
+Term -> . Term * Factor  | then do + - * /
+Term -> . Term / Factor  | then do + - * /
+Term -> . Factor  | then do + - * /
+Factor -> . ident  | then do + - * /
+Factor -> . number  | then do + - * /
+Factor -> . ( Exp )  | then do + - * /
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.56:
+Exp -> Exp + . Term  | $ ; = end then do <> < > <= >= + - )
+Term -> . Term * Factor  | $ ; = end then do <> < > <= >= + - * / )
+Term -> . Term / Factor  | $ ; = end then do <> < > <= >= + - * / )
+Term -> . Factor  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . ident  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . number  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . ( Exp )  | $ ; = end then do <> < > <= >= + - * / )
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.57:
+Exp -> Exp - . Term  | $ ; = end then do <> < > <= >= + - )
+Term -> . Term * Factor  | $ ; = end then do <> < > <= >= + - * / )
+Term -> . Term / Factor  | $ ; = end then do <> < > <= >= + - * / )
+Term -> . Factor  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . ident  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . number  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . ( Exp )  | $ ; = end then do <> < > <= >= + - * / )
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.58:
+Stmt -> if Cond then . M Stmt  | $ ; end
+M -> eps . | $ ; ident call begin end if while
+  $ -> REDUCE(4)
+  ; -> REDUCE(4)
+  ident -> REDUCE(4)
+  call -> REDUCE(4)
+  begin -> REDUCE(4)
+  end -> REDUCE(4)
+  if -> REDUCE(4)
+  while -> REDUCE(4)
+
+.59:
+Cond -> odd ident . | then do
+  then -> REDUCE(33)
+  do -> REDUCE(33)
+
+.60:
+Term -> Term * . Factor  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . ident  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . number  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . ( Exp )  | $ ; = end then do <> < > <= >= + - * / )
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.61:
+Term -> Term / . Factor  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . ident  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . number  | $ ; = end then do <> < > <= >= + - * / )
+Factor -> . ( Exp )  | $ ; = end then do <> < > <= >= + - * / )
+  ident -> SHIFT(35)
+  number -> SHIFT(36)
+  ( -> SHIFT(42)
+
+.62:
+Factor -> ( Exp . )  | $ ; = end then do <> < > <= >= + - * / )
+Exp -> Exp . + Term  | + - )
+Exp -> Exp . - Term  | + - )
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+  ) -> SHIFT(77)
+
+.63:
+Stmt -> while M Cond . do M Stmt  | $ ; end
+  do -> SHIFT(78)
+
+.64:
+ProcDecl -> procedure ident ; N . P Block  | ;
+P -> eps . | const ; ident var procedure call begin if while
+  const -> REDUCE(6)
+  ; -> REDUCE(6)
+  ident -> REDUCE(6)
+  var -> REDUCE(6)
+  procedure -> REDUCE(6)
+  call -> REDUCE(6)
+  begin -> REDUCE(6)
+  if -> REDUCE(6)
+  while -> REDUCE(6)
+
+.65:
+StmtList -> StmtList ; M . Stmt  | ; end
+Stmt -> . ident := Exp  | ; end
+Stmt -> . call ident  | ; end
+Stmt -> . begin StmtList end  | ; end
+Stmt -> . if Cond then M Stmt  | ; end
+Stmt -> . while M Cond do M Stmt  | ; end
+Stmt -> eps . | ; end
+  ; -> REDUCE(26)
+  ident -> SHIFT(20)
+  call -> SHIFT(21)
+  begin -> SHIFT(22)
+  end -> REDUCE(26)
+  if -> SHIFT(23)
+  while -> SHIFT(24)
+
+.66:
+Cond -> Exp = Exp . | then do
+Exp -> Exp . + Term  | then do + -
+Exp -> Exp . - Term  | then do + -
+  then -> REDUCE(27)
+  do -> REDUCE(27)
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+
+.67:
+Cond -> Exp <> Exp . | then do
+Exp -> Exp . + Term  | then do + -
+Exp -> Exp . - Term  | then do + -
+  then -> REDUCE(28)
+  do -> REDUCE(28)
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+
+.68:
+Cond -> Exp < Exp . | then do
+Exp -> Exp . + Term  | then do + -
+Exp -> Exp . - Term  | then do + -
+  then -> REDUCE(29)
+  do -> REDUCE(29)
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+
+.69:
+Cond -> Exp > Exp . | then do
+Exp -> Exp . + Term  | then do + -
+Exp -> Exp . - Term  | then do + -
+  then -> REDUCE(30)
+  do -> REDUCE(30)
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+
+.70:
+Cond -> Exp <= Exp . | then do
+Exp -> Exp . + Term  | then do + -
+Exp -> Exp . - Term  | then do + -
+  then -> REDUCE(31)
+  do -> REDUCE(31)
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+
+.71:
+Cond -> Exp >= Exp . | then do
+Exp -> Exp . + Term  | then do + -
+Exp -> Exp . - Term  | then do + -
+  then -> REDUCE(32)
+  do -> REDUCE(32)
+  + -> SHIFT(56)
+  - -> SHIFT(57)
+
+.72:
+Exp -> Exp + Term . | $ ; = end then do <> < > <= >= + - )
+Term -> Term . * Factor  | $ ; = end then do <> < > <= >= + - * / )
+Term -> Term . / Factor  | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(34)
+  ; -> REDUCE(34)
+  = -> REDUCE(34)
+  end -> REDUCE(34)
+  then -> REDUCE(34)
+  do -> REDUCE(34)
+  <> -> REDUCE(34)
+  < -> REDUCE(34)
+  > -> REDUCE(34)
+  <= -> REDUCE(34)
+  >= -> REDUCE(34)
+  + -> REDUCE(34)
+  - -> REDUCE(34)
+  * -> SHIFT(60)
+  / -> SHIFT(61)
+  ) -> REDUCE(34)
+
+.73:
+Exp -> Exp - Term . | $ ; = end then do <> < > <= >= + - )
+Term -> Term . * Factor  | $ ; = end then do <> < > <= >= + - * / )
+Term -> Term . / Factor  | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(35)
+  ; -> REDUCE(35)
+  = -> REDUCE(35)
+  end -> REDUCE(35)
+  then -> REDUCE(35)
+  do -> REDUCE(35)
+  <> -> REDUCE(35)
+  < -> REDUCE(35)
+  > -> REDUCE(35)
+  <= -> REDUCE(35)
+  >= -> REDUCE(35)
+  + -> REDUCE(35)
+  - -> REDUCE(35)
+  * -> SHIFT(60)
+  / -> SHIFT(61)
+  ) -> REDUCE(35)
+
+.74:
+Stmt -> if Cond then M . Stmt  | $ ; end
+Stmt -> . ident := Exp  | $ ; end
+Stmt -> . call ident  | $ ; end
+Stmt -> . begin StmtList end  | $ ; end
+Stmt -> . if Cond then M Stmt  | $ ; end
+Stmt -> . while M Cond do M Stmt  | $ ; end
+Stmt -> eps . | $ ; end
+  $ -> REDUCE(26)
+  ; -> REDUCE(26)
+  ident -> SHIFT(20)
+  call -> SHIFT(21)
+  begin -> SHIFT(22)
+  end -> REDUCE(26)
+  if -> SHIFT(23)
+  while -> SHIFT(24)
+
+.75:
+Term -> Term * Factor . | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(37)
+  ; -> REDUCE(37)
+  = -> REDUCE(37)
+  end -> REDUCE(37)
+  then -> REDUCE(37)
+  do -> REDUCE(37)
+  <> -> REDUCE(37)
+  < -> REDUCE(37)
+  > -> REDUCE(37)
+  <= -> REDUCE(37)
+  >= -> REDUCE(37)
+  + -> REDUCE(37)
+  - -> REDUCE(37)
+  * -> REDUCE(37)
+  / -> REDUCE(37)
+  ) -> REDUCE(37)
+
+.76:
+Term -> Term / Factor . | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(38)
+  ; -> REDUCE(38)
+  = -> REDUCE(38)
+  end -> REDUCE(38)
+  then -> REDUCE(38)
+  do -> REDUCE(38)
+  <> -> REDUCE(38)
+  < -> REDUCE(38)
+  > -> REDUCE(38)
+  <= -> REDUCE(38)
+  >= -> REDUCE(38)
+  + -> REDUCE(38)
+  - -> REDUCE(38)
+  * -> REDUCE(38)
+  / -> REDUCE(38)
+  ) -> REDUCE(38)
+
+.77:
+Factor -> ( Exp ) . | $ ; = end then do <> < > <= >= + - * / )
+  $ -> REDUCE(42)
+  ; -> REDUCE(42)
+  = -> REDUCE(42)
+  end -> REDUCE(42)
+  then -> REDUCE(42)
+  do -> REDUCE(42)
+  <> -> REDUCE(42)
+  < -> REDUCE(42)
+  > -> REDUCE(42)
+  <= -> REDUCE(42)
+  >= -> REDUCE(42)
+  + -> REDUCE(42)
+  - -> REDUCE(42)
+  * -> REDUCE(42)
+  / -> REDUCE(42)
+  ) -> REDUCE(42)
+
+.78:
+Stmt -> while M Cond do . M Stmt  | $ ; end
+M -> eps . | $ ; ident call begin end if while
+  $ -> REDUCE(4)
+  ; -> REDUCE(4)
+  ident -> REDUCE(4)
+  call -> REDUCE(4)
+  begin -> REDUCE(4)
+  end -> REDUCE(4)
+  if -> REDUCE(4)
+  while -> REDUCE(4)
+
+.79:
+ProcDecl -> procedure ident ; N P . Block  | ;
+Block -> . ConstDecl VarDecl ProcDeclList Stmt  | ;
+ConstDecl -> . const ConstDefList ;  | ; ident var procedure call begin if while
+ConstDecl -> eps . | ; ident var procedure call begin if while
+  const -> SHIFT(5)
+  ; -> REDUCE(8)
+  ident -> REDUCE(8)
+  var -> REDUCE(8)
+  procedure -> REDUCE(8)
+  call -> REDUCE(8)
+  begin -> REDUCE(8)
+  if -> REDUCE(8)
+  while -> REDUCE(8)
+
+.80:
+StmtList -> StmtList ; M Stmt . | ; end
+  ; -> REDUCE(20)
+  end -> REDUCE(20)
+
+.81:
+Stmt -> if Cond then M Stmt . | $ ; end
+  $ -> REDUCE(24)
+  ; -> REDUCE(24)
+  end -> REDUCE(24)
+
+.82:
+Stmt -> while M Cond do M . Stmt  | $ ; end
+Stmt -> . ident := Exp  | $ ; end
+Stmt -> . call ident  | $ ; end
+Stmt -> . begin StmtList end  | $ ; end
+Stmt -> . if Cond then M Stmt  | $ ; end
+Stmt -> . while M Cond do M Stmt  | $ ; end
+Stmt -> eps . | $ ; end
+  $ -> REDUCE(26)
+  ; -> REDUCE(26)
+  ident -> SHIFT(20)
+  call -> SHIFT(21)
+  begin -> SHIFT(22)
+  end -> REDUCE(26)
+  if -> SHIFT(23)
+  while -> SHIFT(24)
+
+.83:
+ProcDecl -> procedure ident ; N P Block . | ;
+  ; -> REDUCE(18)
+
+.84:
+Stmt -> while M Cond do M Stmt . | $ ; end
+  $ -> REDUCE(25)
+  ; -> REDUCE(25)
+  end -> REDUCE(25)
+
+ ACTION / GOTO 表 
+I | eps       $         const     ;         ,         ident     =         number    var       procedure :=        call      begin     end       if        then      while     do        <>        <         >         <=        >=        odd       +         -         *         /         (         )          | Start     Program   Block     ConstDecl VarDecl   ProcDeclListStmt      M         N         P         ConstDefListConstDef  IdentList ProcDecl  StmtList  Exp       Cond      Term      Factor    
+-----|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 0   | -         r8        s5        -         -         r8        -         -         r8        r8        -         r8        r8        -         r8        -         r8        -         -         -         -         -         -         -         -         -         -         -         -         -          | 1         2         3         4         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 1   | -         acc       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 2   | -         r1        -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 3   | -         r2        -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 4   | -         r13       -         r13       -         r13       -         -         s7        r13       -         r13       r13       -         r13       -         r13       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         6         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 5   | -         -         -         -         -         s10       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         8         9         -         -         -         -         -         -         -         
+ 6   | -         r17       -         r17       -         r17       -         -         -         s13       -         r17       r17       -         r17       -         r17       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         11        -         -         -         -         -         -         -         12        -         -         -         -         -         
+ 7   | -         -         -         -         -         s14       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         15        -         -         -         -         -         -         
+ 8   | -         -         -         s16       s17       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 9   | -         -         -         r9        r9        -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 10  | -         -         -         -         -         -         s18       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 11  | -         r26       -         r26       -         s20       -         -         -         -         -         s21       s22       -         s23       -         s24       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         19        -         -         -         -         -         -         -         -         -         -         -         -         
+ 12  | -         -         -         s25       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 13  | -         -         -         -         -         s26       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 14  | -         -         -         r14       r14       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 15  | -         -         -         s27       s28       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 16  | -         r7        -         r7        -         r7        -         -         r7        r7        -         r7        r7        -         r7        -         r7        -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 17  | -         -         -         -         -         s10       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         29        -         -         -         -         -         -         -         
+ 18  | -         -         -         -         -         -         -         s30       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 19  | -         r3        -         r3        -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 20  | -         -         -         -         -         -         -         -         -         -         s31       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 21  | -         -         -         -         -         s32       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 22  | -         -         -         -         -         s20       -         -         -         -         -         s21       s22       r26       s23       -         s24       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         33        -         -         -         -         -         -         -         34        -         -         -         -         
+ 23  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s39       -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         37        38        40        41        
+ 24  | -         -         -         -         -         r4        -         r4        -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         r4        -         -         -         -         r4        -          | -         -         -         -         -         -         -         43        -         -         -         -         -         -         -         -         -         -         -         
+ 25  | -         r17       -         r17       -         r17       -         -         -         s13       -         r17       r17       -         r17       -         r17       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         44        -         -         -         -         -         -         -         12        -         -         -         -         -         
+ 26  | -         -         -         s45       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 27  | -         r12       -         r12       -         r12       -         -         -         r12       -         r12       r12       -         r12       -         r12       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 28  | -         -         -         -         -         s46       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 29  | -         -         -         r10       r10       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 30  | -         -         -         r11       r11       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 31  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         47        -         40        41        
+ 32  | -         r22       -         r22       -         -         -         -         -         -         -         -         -         r22       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 33  | -         -         -         r19       -         -         -         -         -         -         -         -         -         r19       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 34  | -         -         -         s48       -         -         -         -         -         -         -         -         -         s49       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 35  | -         r40       -         r40       -         -         r40       -         -         -         -         -         -         r40       -         r40       -         r40       r40       r40       r40       r40       r40       -         r40       r40       r40       r40       -         r40        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 36  | -         r41       -         r41       -         -         r41       -         -         -         -         -         -         r41       -         r41       -         r41       r41       r41       r41       r41       r41       -         r41       r41       r41       r41       -         r41        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 37  | -         -         -         -         -         -         s50       -         -         -         -         -         -         -         -         -         -         -         s51       s52       s53       s54       s55       -         s56       s57       -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 38  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s58       -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 39  | -         -         -         -         -         s59       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 40  | -         r36       -         r36       -         -         r36       -         -         -         -         -         -         r36       -         r36       -         r36       r36       r36       r36       r36       r36       -         r36       r36       s60       s61       -         r36        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 41  | -         r39       -         r39       -         -         r39       -         -         -         -         -         -         r39       -         r39       -         r39       r39       r39       r39       r39       r39       -         r39       r39       r39       r39       -         r39        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 42  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         62        -         40        41        
+ 43  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s39       -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         37        63        40        41        
+ 44  | -         r16       -         r16       -         r16       -         -         -         -         -         r16       r16       -         r16       -         r16       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 45  | -         -         r5        r5        -         r5        -         -         r5        r5        -         r5        r5        -         r5        -         r5        -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         64        -         -         -         -         -         -         -         -         -         -         
+ 46  | -         -         -         r15       r15       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 47  | -         r21       -         r21       -         -         -         -         -         -         -         -         -         r21       -         -         -         -         -         -         -         -         -         -         s56       s57       -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 48  | -         -         -         r4        -         r4        -         -         -         -         -         r4        r4        r4        r4        -         r4        -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         65        -         -         -         -         -         -         -         -         -         -         -         
+ 49  | -         r23       -         r23       -         -         -         -         -         -         -         -         -         r23       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 50  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         66        -         40        41        
+ 51  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         67        -         40        41        
+ 52  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         68        -         40        41        
+ 53  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         69        -         40        41        
+ 54  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         70        -         40        41        
+ 55  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         71        -         40        41        
+ 56  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         72        41        
+ 57  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         73        41        
+ 58  | -         r4        -         r4        -         r4        -         -         -         -         -         r4        r4        r4        r4        -         r4        -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         74        -         -         -         -         -         -         -         -         -         -         -         
+ 59  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         r33       -         r33       -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 60  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         75        
+ 61  | -         -         -         -         -         s35       -         s36       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s42       -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         76        
+ 62  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s56       s57       -         -         -         s77        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 63  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         s78       -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 64  | -         -         r6        r6        -         r6        -         -         r6        r6        -         r6        r6        -         r6        -         r6        -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         79        -         -         -         -         -         -         -         -         -         
+ 65  | -         -         -         r26       -         s20       -         -         -         -         -         s21       s22       r26       s23       -         s24       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         80        -         -         -         -         -         -         -         -         -         -         -         -         
+ 66  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         r27       -         r27       -         -         -         -         -         -         s56       s57       -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 67  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         r28       -         r28       -         -         -         -         -         -         s56       s57       -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 68  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         r29       -         r29       -         -         -         -         -         -         s56       s57       -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 69  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         r30       -         r30       -         -         -         -         -         -         s56       s57       -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 70  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         r31       -         r31       -         -         -         -         -         -         s56       s57       -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 71  | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         r32       -         r32       -         -         -         -         -         -         s56       s57       -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 72  | -         r34       -         r34       -         -         r34       -         -         -         -         -         -         r34       -         r34       -         r34       r34       r34       r34       r34       r34       -         r34       r34       s60       s61       -         r34        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 73  | -         r35       -         r35       -         -         r35       -         -         -         -         -         -         r35       -         r35       -         r35       r35       r35       r35       r35       r35       -         r35       r35       s60       s61       -         r35        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 74  | -         r26       -         r26       -         s20       -         -         -         -         -         s21       s22       r26       s23       -         s24       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         81        -         -         -         -         -         -         -         -         -         -         -         -         
+ 75  | -         r37       -         r37       -         -         r37       -         -         -         -         -         -         r37       -         r37       -         r37       r37       r37       r37       r37       r37       -         r37       r37       r37       r37       -         r37        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 76  | -         r38       -         r38       -         -         r38       -         -         -         -         -         -         r38       -         r38       -         r38       r38       r38       r38       r38       r38       -         r38       r38       r38       r38       -         r38        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 77  | -         r42       -         r42       -         -         r42       -         -         -         -         -         -         r42       -         r42       -         r42       r42       r42       r42       r42       r42       -         r42       r42       r42       r42       -         r42        | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 78  | -         r4        -         r4        -         r4        -         -         -         -         -         r4        r4        r4        r4        -         r4        -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         82        -         -         -         -         -         -         -         -         -         -         -         
+ 79  | -         -         s5        r8        -         r8        -         -         r8        r8        -         r8        r8        -         r8        -         r8        -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         83        4         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 80  | -         -         -         r20       -         -         -         -         -         -         -         -         -         r20       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 81  | -         r24       -         r24       -         -         -         -         -         -         -         -         -         r24       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 82  | -         r26       -         r26       -         s20       -         -         -         -         -         s21       s22       r26       s23       -         s24       -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         84        -         -         -         -         -         -         -         -         -         -         -         -         
+ 83  | -         -         -         r18       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
+ 84  | -         r25       -         r25       -         -         -         -         -         -         -         -         -         r25       -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -          | -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         -         
